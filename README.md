@@ -1,4 +1,4 @@
-# Auditable JSON Changes
+# JSON Object Diff Utility
 
 At one of my previous jobs we were manipulating a lot of JSON data and we needed an audit trail of every change that was made to a JSON objects.
 
@@ -361,7 +361,7 @@ Next, let's tackle the verbosity and the potential for choosing the incorrect ty
 ```ts
 export class PropertyDescriptors {
   static boolean<TProperty extends boolean | boolean[] | undefined = boolean>(
-    name: string
+    name: string,
   ): PropertyDescriptor<TProperty> {
     return {
       name: name,
@@ -371,7 +371,7 @@ export class PropertyDescriptors {
 
   static complex<TProperty>(
     name: string,
-    descriptor: TypeDescriptor<Unarray<TProperty>>
+    descriptor: TypeDescriptor<Unarray<TProperty>>,
   ): PropertyDescriptor<TProperty> {
     return {
       name: name,
@@ -380,18 +380,14 @@ export class PropertyDescriptors {
     };
   }
 
-  static number<TProperty extends number | number[] | undefined = number>(
-    name: string
-  ): PropertyDescriptor<TProperty> {
+  static number<TProperty extends number | number[] | undefined = number>(name: string): PropertyDescriptor<TProperty> {
     return {
       name: name,
       type: 'number',
     };
   }
 
-  static string<TProperty extends string | string[] | undefined = string>(
-    name: string
-  ): PropertyDescriptor<TProperty> {
+  static string<TProperty extends string | string[] | undefined = string>(name: string): PropertyDescriptor<TProperty> {
     return {
       name: name,
       type: 'string',
@@ -424,10 +420,7 @@ export class AutomobileTypeDescriptorRegistry {
         model: PropertyDescriptors.string('model'),
         year: PropertyDescriptors.number('year'),
         msrp: PropertyDescriptors.number('msrp'),
-        features: PropertyDescriptors.complex(
-          'features',
-          this.automobileFeature
-        ),
+        features: PropertyDescriptors.complex('features', this.automobileFeature),
         salePrice: PropertyDescriptors.number('salePrice'),
       },
     };
@@ -455,9 +448,7 @@ That's _much_ cleaner. But we still have the problem of redundantly passing in t
 export class TypeDescriptors {
   static create<T>(config: TypeDescriptor<T>): TypeDescriptor<T> {
     for (const key of Object.keys(config.properties)) {
-      const property: PropertyDescriptor<unknown> = (config.properties as any)[
-        key
-      ];
+      const property: PropertyDescriptor<unknown> = (config.properties as any)[key];
       property.name = key;
     }
 
